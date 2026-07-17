@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LUMEN 流明 · 虚拟美术馆</title>
+    <!--
+      GitHub Pages SPA trick：刷新子路径时 404.html 会被服务，
+      它把当前路径写进 sessionStorage，然后跳回 index.html；
+      主应用读取后还原路径。本项目为单页无路由，主要是兜底防 404 白屏。
+    -->
+    <script>
+      // 兜底：直接回根路径
+      var basePath = '/lumen-gallery/';
+      if (window.location.pathname !== basePath) {
+        window.location.replace(basePath);
+      }
+    </script>
+  </head>
+  <body></body>
+</html>

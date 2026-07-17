@@ -1,0 +1,45 @@
+{
+  "default": "casual-man",
+  "characters": [
+    {
+      "id": "casual-man",
+      "name": "阿澈",
+      "label": "休闲男观众",
+      "desc": "灰 T 牛仔裤的典型逛展青年",
+      "src": "/assets/characters/casual-man.glb",
+      "height": 1.78
+    },
+    {
+      "id": "casual-woman",
+      "name": "小满",
+      "label": "休闲女观众",
+      "desc": "白背心橘红裤的轻快参观者",
+      "src": "/assets/characters/casual-woman.glb",
+      "height": 1.70
+    },
+    {
+      "id": "business-man",
+      "name": "顾先生",
+      "label": "商务正装",
+      "desc": "西装领带，策展人/贵宾气质",
+      "src": "/assets/characters/business-man.glb",
+      "height": 1.80
+    },
+    {
+      "id": "worker",
+      "name": "老周",
+      "label": "场馆工作人员",
+      "desc": "安全帽反光背心，布展运维风",
+      "src": "/assets/characters/worker.glb",
+      "height": 1.76
+    },
+    {
+      "id": "mannequin",
+      "name": "流明人台",
+      "label": "经典人台",
+      "desc": "默认美术馆陶瓷人台（内置程序化角色）",
+      "src": null,
+      "height": 1.75
+    }
+  ]
+}

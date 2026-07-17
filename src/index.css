@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* LUMEN 设计 token（design.md §4.1） */
+    --paper: #F4F1EA;
+    --paper-dim: #E9E4D8;
+    --ink: #221F1A;
+    --ink-60: rgba(34, 31, 26, .60);
+    --ink-38: rgba(34, 31, 26, .38);
+    --stone: #8A8375;
+    --brass: #A67C3D;
+    --brass-bright: #C89B5A;
+    --brass-wash: rgba(166, 124, 61, .12);
+    --night: #14120F;
+    --line: rgba(34, 31, 26, .12);
+    --ok: #5F7A54;
+
+    /* shadcn 兼容变量（映射到 LUMEN 色板） */
+    --background: 42 26% 94%;
+    --foreground: 36 13% 12%;
+    --card: 42 26% 94%;
+    --card-foreground: 36 13% 12%;
+    --popover: 42 26% 94%;
+    --popover-foreground: 36 13% 12%;
+    --primary: 35 46% 45%;
+    --primary-foreground: 42 26% 94%;
+    --secondary: 40 21% 88%;
+    --secondary-foreground: 36 13% 12%;
+    --muted: 40 21% 88%;
+    --muted-foreground: 43 9% 50%;
+    --accent: 40 21% 88%;
+    --accent-foreground: 36 13% 12%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 42 26% 94%;
+    --border: 36 13% 12%;
+    --input: 36 13% 12%;
+    --ring: 35 46% 45%;
+    --radius: 0.625rem;
+  }
+
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Manrope, "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  .font-serif-lumen {
+    font-family: Fraunces, "Noto Serif SC", "Songti SC", serif;
+    font-feature-settings: "ss01";
+  }
+
+  .font-mono-lumen {
+    font-family: "IBM Plex Mono", "Courier New", monospace;
+  }
+
+  /* 弹窗内长文：细滚动条 */
+  .lumen-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+  .lumen-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .lumen-scroll::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 2px;
+  }
+
+  /* 键盘可达性：焦点可见 */
+  :focus-visible {
+    outline: 1.5px solid var(--brass);
+    outline-offset: 2px;
+  }
+}

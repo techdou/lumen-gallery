@@ -1,0 +1,24 @@
+# 统一文本文件换行符为 LF（避免 Windows/Mac/Linux 协作时 CRLF 战争）
+# Git 提交时统一存为 LF；checkout 时按各操作系统自动转换
+* text=auto eol=lf
+
+# 二进制文件不做换行符处理
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.glb binary
+*.gltf binary
+*.mp4 binary
+*.webm binary
+*.mp3 binary
+*.wav binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.zip binary
