@@ -14,7 +14,7 @@
 ## 一、快速启动
 
 ```bash
-# 环境要求：Node.js 20+
+# 环境要求：Node.js 22+
 npm install        # 安装依赖
 npm run dev        # 开发模式，默认 http://localhost:3000
 npm run build      # 类型检查 + 生产构建，输出 dist/
