@@ -42,6 +42,9 @@ export const ExhibitSchema = z.object({
   focusRadius: z.number().positive().default(2.6),
   spotlight: z.boolean().default(true),
   modelScale: z.number().positive().default(1),
+  /** 模型绕 X 轴的旋转矫正（度数）。用于"躺平"扫描——
+   * 例如 SMK 扫描时雕塑平放、Z 是真实高度，配 -90 让它立起。 */
+  modelRotationDeg: z.number().default(0),
   spin: z.boolean().default(false),
 });
 export type Exhibit = z.infer<typeof ExhibitSchema>;

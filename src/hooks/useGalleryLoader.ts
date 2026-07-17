@@ -76,11 +76,24 @@ export function useGalleryLoader() {
           setCharacterId(characters.default);
         }
 
-        // 预载清单：展品图 + 视频海报 + 角色 GLB（合并计入同一进度条）
+        // 预载清单：展品图 + 视频海报 + 展品 model GLB + 角色 GLB（合并计入同一进度条）
         const jobs: (() => Promise<void>)[] = [];
         for (const e of data.exhibits) {
           if (e.type === 'image' && e.src) jobs.push(() => loadImage(assetUrl(e.src)));
           if (e.type === 'video' && e.poster) jobs.push(() => loadImage(assetUrl(e.poster)));
+          if (e.type === 'model' && e.src) {
+            // 展品 GLB：预载入 THREE.Cache + 预热 drei，避免走近展台才触发加载
+            const url = assetUrl(e.src);
+            jobs.push(async () => {
+              try {
+                await new GLTFLoader().loadAsync(url);
+                if (!alive) return;
+                useGLTF.preload(url);
+              } catch {
+                console.warn(`[LUMEN] 展品「${e.id}」模型加载失败，将回退为程序化雕塑：${url}`);
+              }
+            });
+          }
         }
         for (const c of characters.characters) {
           if (!c.src) continue; // 内置人台无需预载

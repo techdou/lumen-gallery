@@ -5,7 +5,7 @@
 
 - 渲染引擎：Three.js + React Three Fiber（TypeScript）
 - 数据驱动：全部展品由 `public/data/exhibits.json` 配置，**无需改代码**即可换展
-- 演示内容：19 件公共领域（Public Domain / CC0 / CC-BY）艺术品，来源与许可见 `public/assets/ASSETS-LICENSE.md`
+- 演示内容：15 件公共领域画作 + 4 件真实 3D 扫描雕塑（维纳斯/大卫头像/思想者/掷铁饼者，来自 SMK 丹麦国家美术馆与独立扫描者，CC0 / CC-BY），来源与许可见 `public/assets/ASSETS-LICENSE.md`
 
 > **在线预览**：`https://<你的 GitHub 用户名>.github.io/lumen-gallery/`（推送 `main` 分支后 GitHub Actions 自动构建部署，见下文「部署」）
 
@@ -75,7 +75,10 @@ npm run lint       # ESLint 代码检查
     "frame": "black",                // oak | black | gilt | none（wall-frame 专用）
     "focusRadius": 2.6,              // 聚焦触发半径（可选）
     "spotlight": true,               // 是否配轨道射灯（可选）
-    "spin": true                     // pedestal 展品缓速自转（可选）
+    "spin": true,                    // pedestal 展品缓速自转（可选）
+    // —— model（pedestal）专用字段 ——
+    "modelScale": 1,                 // 模型整体缩放倍率（可选）
+    "modelRotationDeg": 0            // 模型绕 X 轴矫正（度数，可选）；扫描"躺平"的雕塑配 -90 让它立起
   }]
 }
 ```

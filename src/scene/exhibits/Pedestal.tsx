@@ -72,17 +72,46 @@ function FallbackSculpture({ seed, scale = 1 }: { seed: string; scale?: number }
   );
 }
 
-/** glb 展品（有 src 时；包围盒归一化缩放到目标高度） */
-function GltfModel({ src, targetH, modelScale }: { src: string; targetH: number; modelScale: number }) {
+/**
+ * glb 展品（有 src 时）。
+ * 处理顺序：绕 X 轴旋转矫正（让"躺平"扫描立起）→ 测包围盒 →
+ * 按 Y 高度归一化缩放（×modelScale）→ 平移让脚底（minY）对齐 y=0。
+ * 这样无论原模型的轴/单位/朝向如何，最终都立在台座顶面、目标高度 targetH。
+ */
+function GltfModel({
+  src,
+  targetH,
+  modelScale,
+  rotationDeg,
+}: {
+  src: string;
+  targetH: number;
+  modelScale: number;
+  rotationDeg: number;
+}) {
   const { scene } = useGLTF(assetUrl(src));
-  const scale = useMemo(() => {
-    const box = new THREE.Box3().setFromObject(scene);
+  // 克隆避免污染 drei 的 GLTF 缓存（同一 src 被多个展品复用时）
+  const cloned = useMemo(() => scene.clone(true), [scene]);
+  const { scale, footY } = useMemo(() => {
+    const rx = (rotationDeg * Math.PI) / 180;
+    // 应用 X 轴矫正后再测包围盒（临时 parent 让旋转生效）
+    const pivot = new THREE.Object3D();
+    pivot.rotation.x = rx;
+    pivot.add(cloned);
+    cloned.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(cloned);
     const size = new THREE.Vector3();
     box.getSize(size);
     const h = Math.max(size.y, 0.001);
-    return (targetH / h) * modelScale;
-  }, [scene, targetH, modelScale]);
-  return <primitive object={scene} scale={scale} castShadow />;
+    const s = (targetH / h) * modelScale;
+    // 脚底对齐：把 minY 缩放后的偏移上提
+    return { scale: s, footY: -box.min.y * s };
+  }, [cloned, rotationDeg, targetH, modelScale]);
+  return (
+    <group rotation={[(rotationDeg * Math.PI) / 180, 0, 0]} position={[0, footY, 0]} scale={scale}>
+      <primitive object={cloned} castShadow />
+    </group>
+  );
 }
 
 export default function Pedestal({ exhibit: e, big = false }: { exhibit: Exhibit; big?: boolean }) {
@@ -112,7 +141,12 @@ export default function Pedestal({ exhibit: e, big = false }: { exhibit: Exhibit
       <group ref={spinRef} position={[0, height, 0]}>
         {e.src ? (
           <Suspense fallback={<FallbackSculpture seed={e.id} scale={targetH / 0.64} />}>
-            <GltfModel src={e.src} targetH={targetH} modelScale={e.modelScale ?? 1} />
+            <GltfModel
+              src={e.src}
+              targetH={targetH}
+              modelScale={e.modelScale ?? 1}
+              rotationDeg={e.modelRotationDeg ?? 0}
+            />
           </Suspense>
         ) : (
           <FallbackSculpture seed={e.id} scale={targetH / 0.64} />

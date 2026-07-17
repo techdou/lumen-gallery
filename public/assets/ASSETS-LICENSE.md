@@ -33,9 +33,18 @@
 
 ## 3D 模型（public/assets/models/）
 
-首版未随附 glb：CC0 雕塑扫描在本环境无可靠直链。所有 `type: model` 展品由
-`src/scene/exhibits/` 内的**程序化几何回退雕塑**呈现（纯代码生成，无第三方素材、许可干净）。
-放入自有 glb 的方法见 `models/README.txt`。
+4 件雕塑展品均使用真实 3D 扫描 GLB（来自 Sketchfab），按 CC0 或 CC-BY 4.0 授权。
+源扫描数据由博物馆或独立扫描者发布，本模板直接以原 GLB 嵌入展示，未做二次修改。
+
+| 文件 | 作品 | 扫描者/上传者 | 扫描方式 | 许可 | Sketchfab URL |
+|---|---|---|---|---|---|
+| venus-de-milo.glb | 米洛的维纳斯（Venus de Milo, 约 7.6 MB） | SMK – National Gallery of Denmark | 石膏铸件扫描（KAS434/1） | **CC0 Public Domain** | https://sketchfab.com/3d-models/venus-de-milo-aphrodite-of-milos-53082b5d6cef4c34a9701a2a24f58075 |
+| david-head.glb | 米开朗基罗《大卫》头像（约 4.8 MB） | Thomas Flynn（源自 SMK Royal Cast Collection，1899 年裁切胸像铸件 Beckett #756） | Artec Eva 结构光扫描 | **CC-BY 4.0**（须署名 Thomas Flynn） | https://sketchfab.com/3d-models/head-of-michelangelos-david-optimised-d29af50360624e5e9b1855666475380d |
+| the-thinker.glb | 罗丹《思想者》（约 4.8 MB） | Rigsters | 2017 年摄影测量扫描（约 700 张照片） | **CC-BY 4.0**（须署名 Rigsters） | https://sketchfab.com/3d-models/the-thinker-by-auguste-rodin-08a1e693c9674a3292dec2298b09e0ae |
+| discobolus.glb | 掷铁饼者（Discobolus, 约 5.6 MB） | SMK – National Gallery of Denmark | 石膏铸件扫描 | **CC0 Public Domain** | https://sketchfab.com/3d-models/discobolus-the-discus-thrower-50f50abf45414ad8a658325df7a5fcb3 |
+
+获取日期：2026-07-18。CC-BY 4.0 两件（David head / The Thinker）须在使用、二次分发时保留署名；
+CC0 两件（Venus de Milo / Discobolus）无署名义务，但仍建议致谢 SMK。放入自有 glb 替换的方法见 `models/README.txt`。
 
 ## 纹理（public/assets/textures/）
 
