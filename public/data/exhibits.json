@@ -32,7 +32,7 @@
       "rotationDeg": 0,
       "modelRotationDeg": -90,
       "modelScale": 1,
-      "spin": true,
+      "spin": false,
       "focusRadius": 3.2,
       "spotlight": true
     },
@@ -249,7 +249,7 @@
       "rotationDeg": 0,
       "modelRotationDeg": 0,
       "modelScale": 1,
-      "spin": true,
+      "spin": false,
       "spotlight": true
     },
     {
@@ -269,7 +269,7 @@
       "rotationDeg": 0,
       "modelRotationDeg": 0,
       "modelScale": 1,
-      "spin": true,
+      "spin": false,
       "spotlight": true
     },
     {
@@ -287,9 +287,9 @@
       "src": "/assets/models/discobolus.glb",
       "position": [23.5, 0, 0],
       "rotationDeg": 0,
-      "modelRotationDeg": -90,
+      "modelRotationDeg": 0,
       "modelScale": 1,
-      "spin": true,
+      "spin": false,
       "spotlight": true
     },
     {

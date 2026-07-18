@@ -80,3 +80,8 @@ coverage/
 .netlify/
 .firebase/
 .surgeignore
+
+# 开发期临时验证脚本与截图
+scripts/_shots/
+scripts/screenshot.mjs
+scripts/debug*.mjs

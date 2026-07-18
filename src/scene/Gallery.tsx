@@ -9,6 +9,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { MAT, PERF } from '@/config/site';
 import { useStore, playerRef } from '@/state/store';
 import { registerObstacles, clearObstacles, buildArchitectureObstacles } from '@/systems/collision';
+import CanvasErrorBoundary from './CanvasErrorBoundary';
 import Walls from './architecture/Walls';
 import Floor from './architecture/Floor';
 import Ceiling from './architecture/Ceiling';
@@ -117,6 +118,7 @@ export default function Gallery() {
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 10 }}>
+      <CanvasErrorBoundary>
       <Canvas
         frameloop="never"
         shadows={!LOWSPEC}
@@ -150,6 +152,7 @@ export default function Gallery() {
           background: 'radial-gradient(120% 90% at 50% 45%, transparent 62%, rgba(34,31,26,.14) 100%)',
         }}
       />
+      </CanvasErrorBoundary>
     </div>
   );
 }

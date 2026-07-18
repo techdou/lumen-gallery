@@ -74,9 +74,15 @@ function FallbackSculpture({ seed, scale = 1 }: { seed: string; scale?: number }
 
 /**
  * glb 展品（有 src 时）。
- * 处理顺序：绕 X 轴旋转矫正（让"躺平"扫描立起）→ 测包围盒 →
- * 按 Y 高度归一化缩放（×modelScale）→ 平移让脚底（minY）对齐 y=0。
+ * 处理顺序：测"应用矫正旋转后"的包围盒 → 按 Y 高度归一化缩放（×modelScale）→
+ * 平移让脚底（minY）对齐 y=0 → group 显式声明 rotation/scale/position 渲染。
  * 这样无论原模型的轴/单位/朝向如何，最终都立在台座顶面、目标高度 targetH。
+ *
+ * 两个曾经的坑（写在这里给后人）：
+ * 1. 包围盒测量：必须从 pivot 根调 updateMatrixWorld(true)，让旋转扩散到子节点；
+ *    只对 cloned 调 updateMatrixWorld 拿到的是未旋转的 AABB。
+ * 2. R3F primitive：不会读 object 自身的 rotation/scale/position，每次 reconcile
+ *    都会用 JSX 属性覆盖；所以矫正旋转必须显式写在 group 的 JSX 上。
  */
 function GltfModel({
   src,
@@ -92,23 +98,31 @@ function GltfModel({
   const { scene } = useGLTF(assetUrl(src));
   // 克隆避免污染 drei 的 GLTF 缓存（同一 src 被多个展品复用时）
   const cloned = useMemo(() => scene.clone(true), [scene]);
+  const rx = (rotationDeg * Math.PI) / 180;
+
+  // 测量"应用矫正旋转后"的真实包围盒，用临时 pivot 旋转 cloned（仅用于测量）。
+  // 旧代码错在 cloned.updateMatrixWorld(true) —— 它假设 parent.matrixWorld 已更新，
+  // 但游离的 pivot 没被更新过，cloned.matrixWorld 实际是单位矩阵 → 包围盒反映未旋转状态。
+  // 修正：先 pivot.updateMatrixWorld(true) 让旋转从根往下扩散到 cloned。
   const { scale, footY } = useMemo(() => {
-    const rx = (rotationDeg * Math.PI) / 180;
-    // 应用 X 轴矫正后再测包围盒（临时 parent 让旋转生效）
     const pivot = new THREE.Object3D();
     pivot.rotation.x = rx;
     pivot.add(cloned);
-    cloned.updateMatrixWorld(true);
+    pivot.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(cloned);
+    pivot.remove(cloned); // 测完解除挂载，cloned 留给 primitive 用
     const size = new THREE.Vector3();
     box.getSize(size);
     const h = Math.max(size.y, 0.001);
     const s = (targetH / h) * modelScale;
-    // 脚底对齐：把 minY 缩放后的偏移上提
     return { scale: s, footY: -box.min.y * s };
-  }, [cloned, rotationDeg, targetH, modelScale]);
+  }, [cloned, rx, targetH, modelScale]);
+
+  // 渲染：group 复合变换 = T(脚底平移) · R(矫正旋转) · S(归一化缩放)
+  // rotation/scale/position 全部在 JSX 里显式声明，避免 primitive 被 R3F 接管后
+  // 覆盖 cloned 自身的 transform（R3F 经典坑：primitive 不读 object 的 rotation/scale）。
   return (
-    <group rotation={[(rotationDeg * Math.PI) / 180, 0, 0]} position={[0, footY, 0]} scale={scale}>
+    <group position={[0, footY, 0]} rotation={[rx, 0, 0]} scale={scale}>
       <primitive object={cloned} castShadow />
     </group>
   );
