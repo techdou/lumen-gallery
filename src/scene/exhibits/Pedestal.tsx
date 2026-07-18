@@ -75,14 +75,18 @@ function FallbackSculpture({ seed, scale = 1 }: { seed: string; scale?: number }
 /**
  * glb 展品（有 src 时）。
  * 处理顺序：测"应用矫正旋转后"的包围盒 → 按 Y 高度归一化缩放（×modelScale）→
- * 平移让脚底（minY）对齐 y=0 → group 显式声明 rotation/scale/position 渲染。
- * 这样无论原模型的轴/单位/朝向如何，最终都立在台座顶面、目标高度 targetH。
+ * recenter 把模型 XZ 中心对齐台座中心 → footY 让脚底对齐 y=0 →
+ * group 显式声明 rotation/scale/position 渲染。
  *
- * 两个曾经的坑（写在这里给后人）：
+ * 三个曾经的坑（写在这里给后人）：
  * 1. 包围盒测量：必须从 pivot 根调 updateMatrixWorld(true)，让旋转扩散到子节点；
  *    只对 cloned 调 updateMatrixWorld 拿到的是未旋转的 AABB。
- * 2. R3F primitive：不会读 object 自身的 rotation/scale/position，每次 reconcile
- *    都会用 JSX 属性覆盖；所以矫正旋转必须显式写在 group 的 JSX 上。
+ * 2. R3F primitive：不读 object 自身的 rotation/scale/position，每次 reconcile
+ *    都会用 JSX 属性覆盖；矫正变换必须显式写在 group 的 JSX 上。
+ * 3. 扫描 GLB 的 root node 通常已包含 normalize（mm→m）和姿态矫正（铸件平躺→站立），
+ *    所以多数情况 modelRotationDeg 应为 0；额外加旋转反而会把已站立的雕塑转倒。
+ *    此外部分 GLB（如 david-head）的 root translation 把几何放到远离原点的位置，
+ *    必须用 recenter 平移回原点，否则雕像会偏离台座 / 嵌入地下看不见。
  */
 function GltfModel({
   src,
@@ -104,7 +108,7 @@ function GltfModel({
   // 旧代码错在 cloned.updateMatrixWorld(true) —— 它假设 parent.matrixWorld 已更新，
   // 但游离的 pivot 没被更新过，cloned.matrixWorld 实际是单位矩阵 → 包围盒反映未旋转状态。
   // 修正：先 pivot.updateMatrixWorld(true) 让旋转从根往下扩散到 cloned。
-  const { scale, footY } = useMemo(() => {
+  const { scale, footY, recenter } = useMemo(() => {
     const pivot = new THREE.Object3D();
     pivot.rotation.x = rx;
     pivot.add(cloned);
@@ -115,14 +119,23 @@ function GltfModel({
     box.getSize(size);
     const h = Math.max(size.y, 0.001);
     const s = (targetH / h) * modelScale;
-    return { scale: s, footY: -box.min.y * s };
+    // recenter：把模型 XZ 中心对齐到展台中心（原点），Y 由 footY 处理。
+    // 某些扫描 GLB 的 root translation 把模型放到远离原点的位置（如 david-head 在 y=-30），
+    // 直接渲染会偏离台座，必须用 group 平移把脚底（minY）和 XZ 中心拉回原点。
+    const cx = (box.min.x + box.max.x) / 2;
+    const cz = (box.min.z + box.max.z) / 2;
+    return {
+      scale: s,
+      footY: -box.min.y * s,
+      recenter: [-cx * s, 0, -cz * s] as [number, number, number],
+    };
   }, [cloned, rx, targetH, modelScale]);
 
   // 渲染：group 复合变换 = T(脚底平移) · R(矫正旋转) · S(归一化缩放)
   // rotation/scale/position 全部在 JSX 里显式声明，避免 primitive 被 R3F 接管后
   // 覆盖 cloned 自身的 transform（R3F 经典坑：primitive 不读 object 的 rotation/scale）。
   return (
-    <group position={[0, footY, 0]} rotation={[rx, 0, 0]} scale={scale}>
+    <group position={[recenter[0], footY, recenter[2]]} rotation={[rx, 0, 0]} scale={scale}>
       <primitive object={cloned} castShadow />
     </group>
   );

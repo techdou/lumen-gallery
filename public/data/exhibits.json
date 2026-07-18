@@ -30,8 +30,8 @@
       "src": "/assets/models/venus-de-milo.glb",
       "position": [0, 0, -0.5],
       "rotationDeg": 0,
-      "modelRotationDeg": -90,
-      "modelScale": 1,
+      "modelRotationDeg": 0,
+      "modelScale": 0.8,
       "spin": false,
       "focusRadius": 3.2,
       "spotlight": true
